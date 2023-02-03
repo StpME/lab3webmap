@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>US COVID-19 Rates (2020)</title>
+    <title>US COVID-19 Rates by County (2020)</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet">
@@ -103,7 +103,7 @@
     <div id="map"></div>
     <div id="legend"></div>
     <div id="title">
-        U.S COVID-19 Rates (2020)
+        US COVID-19 Rates by County (2020)
     </div>
     <div id="desc">
         This map shows the rates of COVID-19 cases for 2020 across different counties in the US.
@@ -136,19 +136,19 @@
                         'step',
                         ['get', 'rates'],
                         '#FFEDA0',   // stop_output_0
-                        14,          // stop_input_0
+                        19,          // stop_input_0
                         '#FED976',   // stop_output_1
-                        29,          // stop_input_1
+                        39,          // stop_input_1
                         '#FEB24C',   // stop_output_2
-                        44,          // stop_input_2
+                        59,          // stop_input_2
                         '#FD8D3C',   // stop_output_3
-                        59,         // stop_input_3
+                        79,         // stop_input_3
                         '#FC4E2A',   // stop_output_4
-                        74,         // stop_input_4
+                        99,         // stop_input_4
                         '#E31A1C',   // stop_output_5
-                        89,         // stop_input_5
+                        119,         // stop_input_5
                         '#BD0026',   // stop_output_6
-                        104,        // stop_input_6
+                        139,        // stop_input_6
                         "#800026"    // stop_output_7
                     
                     ],
@@ -165,19 +165,19 @@
         map.on('click', 'rate-point', (e) => {
                 new mapboxgl.Popup()
                     .setLngLat(e.features[0].geometry.coordinates[0][0])
-                    .setHTML(`<strong>COVID-19 Rate: </strong>${e.features[0].properties.rates}%`)
+                    .setHTML(`<strong>COVID-19 Rate: </strong>${e.features[0].properties.rates}`)
                     .addTo(map);
             });
 
         const layers = [
-            '0-14',
-            '15-29',
-            '30-44',
-            '45-59',
-            '60-74',
-            '75-89',
-            '90-104',
-            '105+'
+            '0-19',
+            '20-39',
+            '40-59',
+            '60-79',
+            '80-99',
+            '100-119',
+            '120-139',
+            '140+'
         ];
         const colors = [
             '#FFEDA070',
