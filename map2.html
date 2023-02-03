@@ -123,18 +123,18 @@
             center: [-100, 40] // starting center - US
         });
         map.on('load', () => { 
-            map.addSource('rates', {
+            map.addSource('counts', {
                 type: 'geojson',
                 data: 'assets/us-covid-2020-counts/us-covid-2020-counts.json'
             });
             map.addLayer({
-                'id': 'rate-point',
-                'type': 'fill',
-                'source': 'rates',
+                'id': 'counts-point',
+                'type': 'circle',
+                'source': 'counts-point',
                 'paint': {
                     'fill-color': [
                         'step',
-                        ['get', 'rates'],
+                        ['get', 'counts'],
                         '#FFEDA0',   // stop_output_0
                         14,          // stop_input_0
                         '#FED976',   // stop_output_1
@@ -155,14 +155,14 @@
                     'fill-outline-color': '#000000',
                     'fill-opacity': 0.7,
                 }
-
-
             });
-            
         });
-
+        const grades = [4, 5, 6], 
+        colors = ['rgb(208,209,230)', 'rgb(103,169,207)', 'rgb(1,108,89)'], 
+        radii = [5, 15, 20];
+        
         // On county click: show rate pop up box  
-        map.on('click', 'rate-point', (e) => {
+        /*map.on('click', 'rate-point', (e) => {
                 new mapboxgl.Popup()
                     .setLngLat(e.features[0].geometry.coordinates[0][0])
                     .setHTML(`<strong>COVID-19 Rate: </strong>${e.features[0].properties.rates}%`)
@@ -188,7 +188,7 @@
             '#E31A1C70',
             '#BD002670',
             '#80002670'
-        ];
+        ];*/
         const legend = document.getElementById('legend');
         legend.innerHTML = "<b>Rate of COVID-19 cases (per 1000)</b><br>";
         layers.forEach((layer, i) => {
