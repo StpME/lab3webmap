@@ -21,16 +21,15 @@
         }
         #legend {
             position: absolute;
-
             bottom: 0;
             right: 0;
-            width: 120px;
+            width: 140px;
             background: white;
             margin-right: 20px;
             margin-bottom: 40px;
             padding: 10px 20px 10px 10px;
             border-radius: 10px;
-            text-align: center;
+            text-align: left;
             font-family: 'Open Sans', sans-serif;
         }
         .legend-key {
@@ -106,11 +105,11 @@
         U.S COVID-19 Counts (2020)
     </div>
     <div id="desc">
-        This map shows the rates of COVID-19 cases for 2020 across different counties in the US.
+        This map shows the total counts in orders of magnitude for COVID-19 cases in 2020 across different counties in the US.
         Data for Covid rates originates from the NY Times,
         with the population data and county-level basemap coming from the US Census Bureau.
 
-        Click a county to see their case rate per 1000 people.
+        Click a county to see the total number of COVID-19 cases.
     </div>
     <script>
         mapboxgl.accessToken =
@@ -122,88 +121,70 @@
             zoom: 4, // starting zoom
             center: [-100, 40] // starting center - US
         });
-        map.on('load', () => { 
-            map.addSource('counts', {
+        const grades = [100, 10000, 30000, 60000, 125000],
+            colors = ['rgb(242,240,247)', 'rgb(203,201,226)', 'rgb(158,154,200)', 'rgb(117,107,177)','rgb(84,39,143)'],
+            radii = [5, 15, 20, 25, 35];
+        map.on('load', () => {
+            map.addSource('covid-cases', {
                 type: 'geojson',
                 data: 'assets/us-covid-2020-counts/us-covid-2020-counts.json'
             });
             map.addLayer({
-                'id': 'counts-point',
+                'id': 'cases-point',
                 'type': 'circle',
-                'source': 'counts-point',
+                'source': 'covid-cases',
                 'paint': {
-                    'fill-color': [
-                        'step',
-                        ['get', 'counts'],
-                        '#FFEDA0',   // stop_output_0
-                        14,          // stop_input_0
-                        '#FED976',   // stop_output_1
-                        29,          // stop_input_1
-                        '#FEB24C',   // stop_output_2
-                        44,          // stop_input_2
-                        '#FD8D3C',   // stop_output_3
-                        59,         // stop_input_3
-                        '#FC4E2A',   // stop_output_4
-                        74,         // stop_input_4
-                        '#E31A1C',   // stop_output_5
-                        89,         // stop_input_5
-                        '#BD0026',   // stop_output_6
-                        104,        // stop_input_6
-                        "#800026"    // stop_output_7
-                    
-                    ],
-                    'fill-outline-color': '#000000',
-                    'fill-opacity': 0.7,
+                    'circle-radius': {
+                        'property': 'cases',
+                        'stops': [
+                            [grades[0], radii[0]],
+                            [grades[1], radii[1]],
+                            [grades[2], radii[2]],
+                            [grades[3], radii[3]],
+                            [grades[4], radii[4]]
+                        ]
+                    },
+                    // change the color of the circle as mag value increases
+                    'circle-color': {
+                        'property': 'cases',
+                        'stops': [
+                            [grades[0], colors[0]],
+                            [grades[1], colors[1]],
+                            [grades[2], colors[2]],
+                            [grades[3], colors[3]],
+                            [grades[4], colors[4]]
+                        ]
+                    },
+                    'circle-stroke-color': 'white',
+                    'circle-stroke-width': 1,
+                    'circle-opacity': 0.7
                 }
             });
-        });
-        const grades = [4, 5, 6], 
-        colors = ['rgb(208,209,230)', 'rgb(103,169,207)', 'rgb(1,108,89)'], 
-        radii = [5, 15, 20];
-        
-        // On county click: show rate pop up box  
-        /*map.on('click', 'rate-point', (e) => {
+            // On county click: show count pop up box  
+            map.on('click', 'cases-point', (event) => {
                 new mapboxgl.Popup()
-                    .setLngLat(e.features[0].geometry.coordinates[0][0])
-                    .setHTML(`<strong>COVID-19 Rate: </strong>${e.features[0].properties.rates}%`)
+                    .setLngLat(event.features[0].geometry.coordinates)
+                    .setHTML(`<strong>Total number of cases in ${event.features[0].properties.county} County: </strong> ${event.features[0].properties.cases}`)
                     .addTo(map);
             });
-
-        const layers = [
-            '0-14',
-            '15-29',
-            '30-44',
-            '45-59',
-            '60-74',
-            '75-89',
-            '90-104',
-            '105+'
-        ];
-        const colors = [
-            '#FFEDA070',
-            '#FED97670',
-            '#FEB24C70',
-            '#FD8D3C70',
-            '#FC4E2A70',
-            '#E31A1C70',
-            '#BD002670',
-            '#80002670'
-        ];*/
-        const legend = document.getElementById('legend');
-        legend.innerHTML = "<b>Rate of COVID-19 cases (per 1000)</b><br>";
-        layers.forEach((layer, i) => {
-            const color = colors[i];
-            const item = document.createElement('div');
-            const key = document.createElement('span');
-            key.className = 'legend-key';
-            key.style.backgroundColor = color;
-
-            const value = document.createElement('span');
-            value.innerHTML = `${layer}`;
-            item.appendChild(key);
-            item.appendChild(value);
-            legend.appendChild(item);
         });
+         
+        const legend = document.getElementById('legend');
+        var labels = ['<strong id="legend-title">Total number of COVID-19 Cases in 2020</strong>'],
+            vbreak;
+        for (var i = 0; i < grades.length; i++) {
+            vbreak = grades[i];
+            dot_radii = 2 * radii[i];
+            labels.push(
+                '<p class="break"><i class="dot" style="background:' + colors[i] + '; width: ' + dot_radii +
+                'px; height: ' +
+                dot_radii + 'px; "></i> <span class="dot-label" style="top: ' + dot_radii / 2 + 'px;">' + vbreak +
+                '</span></p>');
+        }
+        // Legend data source
+        const source =
+            '<p style="text-align: right; font-size:10pt">Source: <a href="https://github.com/nytimes/covid-19-data/blob/43d32dde2f87bd4dafbb7d23f5d9e878124018b8/live/us-counties.csv">New York Times</a></p>';
+        legend.innerHTML = labels.join('') + source;
     </script>
 </body>
 
