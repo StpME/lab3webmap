@@ -8,7 +8,7 @@ This lab introduces the Mapbox API through Javascript, where it is used to produ
 ### Map 1: 2020 Choropleth Map of COVID-19 Rates
 ![Choropleth Map of COVID-19 Rates](img/lab_map1.png)
 ### Map 2: 2020 Proportional Symbols Map of COVID-19 Rates
-![Proportional Symbol Map of COVID-19 Rates](img/lab_map2.png)
+![Proportional Symbol Map of COVID-19 Case Counts](img/lab_map2.png)
 
 ## Acknowledgements:
 [Mapbox](https://docs.mapbox.com/mapbox.js/api/v3.3.1/)
